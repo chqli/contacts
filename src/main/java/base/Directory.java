@@ -19,12 +19,12 @@ public class Directory {
     String str = contact.getFirstName();
     Node current = dir;
     for (int i = 0; i < str.length(); i++) {
-      current = current.append(str.charAt(i));
+      current = current.appendIfAbsent(str.charAt(i));
     }
-    current = current.append(' ');
+    current = current.appendIfAbsent(' ');
     str = contact.getLastName();
     for (int i = 0; i < str.length(); i++) {
-      current = current.append(str.charAt(i));
+      current = current.appendIfAbsent(str.charAt(i));
     }
     current.setTerminal(true);
   }
@@ -68,7 +68,10 @@ class Node {
     return nextMap.get(val);
   }
 
-  public Node append(final char val) {
+  public Node appendIfAbsent(final char val) {
+    if (nextMap.containsKey(val)) {
+      return nextMap.get(val);
+    }
     Node node = new Node();
     nextMap.put(val, node);
     return node;
