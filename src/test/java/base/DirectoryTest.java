@@ -26,6 +26,16 @@ public class DirectoryTest {
     List<Contact> findResult = d.findContact(input);
     assertThat(findResult, hasItem(contact));
   }
+
+  @Test
+  public void testNotMatchingSearch() {
+    Contact contact = Contact.parseContact("Chris Harris");
+    Directory d = new Directory();
+    d.addContact(contact);
+    String input = "hris";
+    List<Contact> findResult = d.findContact(input);
+    assertThat(findResult.isEmpty(), is(true));
+  }
   @Test
   public void testShouldSaveMulitpleSameContactsAsSingleRecord() {
     Contact contact = Contact.parseContact("Chris Harris");

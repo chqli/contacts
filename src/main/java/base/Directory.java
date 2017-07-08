@@ -1,6 +1,7 @@
 package base;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,13 +42,13 @@ public class Directory {
     for (int i = 0; i < text.length(); i++) {
       current = current.getNextNode(text.charAt(i));
       if (current == null) {
-        return null;
+        return Collections.emptyList();
       }
     }
     if (current.isTerminal()) {
       strings.add(text);
     }
-    current.allSuffixes(strings, new StringBuilder(text));
+    current.addAllSuffixes(strings, new StringBuilder(text));
     return strings.stream().map(Contact::parseContact).collect(Collectors.toList());
   }
 
@@ -76,19 +77,19 @@ public class Directory {
       if (nextMap.containsKey(val)) {
         return nextMap.get(val);
       }
-      Node node = new Node();
-      nextMap.put(val, node);
-      return node;
+      Node n = new Node();
+      nextMap.put(val, n);
+      return n;
     }
 
-    void allSuffixes(List<String> result, StringBuilder sb) {
+    void addAllSuffixes(List<String> result, StringBuilder sb) {
       for (char c : nextMap.keySet()) {
         Node next = nextMap.get(c);
         sb.append(c);
         if (next.isTerminal()) {
           result.add(sb.toString());
         } else {
-          next.allSuffixes(result, sb);
+          next.addAllSuffixes(result, sb);
         }
         sb.deleteCharAt(sb.length() - 1);
       }
