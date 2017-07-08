@@ -15,6 +15,9 @@ public class Directory {
     this.dir = new Node();
   }
 
+  /**
+   * adds a contact to the directory
+   */
   public void addContact(Contact contact) {
 
     String str = contact.getFirstName();
@@ -33,6 +36,9 @@ public class Directory {
   }
 
 
+  /**
+   * finds list of contacts with prefix as given text
+   */
   public List<Contact> findContact(String text) {
     if (text.isEmpty()) {
       throw new IllegalArgumentException("Input can't be empty");
@@ -52,7 +58,7 @@ public class Directory {
     return strings.stream().map(Contact::parseContact).collect(Collectors.toList());
   }
 
-  class Node {
+  private class Node {
 
     Map<Character, Node> nextMap;
     boolean terminal;
@@ -66,6 +72,9 @@ public class Directory {
       this.nextMap = new HashMap<>(26, 0.75f);
     }
 
+    /**
+     * get next Node corresponding to given character
+     */
     Node getNextNode(char val) {
       if (!nextMap.containsKey(val)) {
         return null;
@@ -73,15 +82,33 @@ public class Directory {
       return nextMap.get(val);
     }
 
+    /**
+     * adds a key-value pair with key as given character and new node as value
+     *
+     * @param val character to append to trie
+     * @return a node corresponding to the character
+     */
     Node appendIfAbsent(final char val) {
-      if (nextMap.containsKey(val)) {
-        return nextMap.get(val);
+      Node next = getNextNode(val);
+      if (null != next) {
+        return next;
       }
       Node n = new Node();
       nextMap.put(val, n);
       return n;
     }
 
+    /**
+     * adds to given list, for all the suffixes ending with terminal node, by prefixing it with given text
+     * e.g. prefix = jo
+     *      terminal suffixes = {hn, hn Doe}
+     * will add following to the given list
+     *      john
+     *      john Doe
+     *
+     * @param result list to which a terminal suffix (prefixed by sb) is added
+     * @param sb prefix
+     */
     void addAllSuffixes(List<String> result, StringBuilder sb) {
       for (char c : nextMap.keySet()) {
         Node next = nextMap.get(c);
@@ -95,6 +122,9 @@ public class Directory {
       }
     }
 
+    /**
+     * if a node is terminal, it is a contact
+     */
     boolean isTerminal() {
       return terminal;
     }

@@ -18,8 +18,11 @@ public class Contact {
     return lastName;
   }
 
+  /**
+   * splits given text by whitespace to get the firstName and lastName
+   */
   public static Contact parseContact(String text) {
-    if (text.isEmpty()) {
+    if (text.trim().isEmpty()) {
       throw new IllegalArgumentException("Input empty not allowed");
     }
     String[] split = text.split(" ");
@@ -27,10 +30,9 @@ public class Contact {
     if (split.length == 1) {
       contact = new Contact(split[0].trim(), "");
     } else if (split.length == 2) {
-      contact = new Contact(split[0].trim(),
-          split[1].trim());
+      contact = new Contact(split[0].trim(), split[1].trim());
     } else {
-      throw new IllegalArgumentException("Extra spaces not allowed");
+      throw new IllegalArgumentException("Only firstname and lastname are supported");
     }
     return contact;
   }
