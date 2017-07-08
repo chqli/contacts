@@ -111,7 +111,7 @@ public class DirectoryTest {
   }
 
   @Test
-  public void testShouldReturnContactsBeyondFirstTerminalContact() {
+  public void testShouldReturnContactsWhichStartWithAnotherValidContact() {
     Contact c2 = Contact.parseContact("nirav");
     Contact c1 = Contact.parseContact("niraj");
     Contact c3 = Contact.parseContact("nirav pranami");

@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Create a directory of contacts using a Trie
+ */
 public class Directory {
 
   private final Node dir;
@@ -54,13 +57,12 @@ public class Directory {
     return result;
   }
 
-  private void mergeResultsFromLastNameDir(List<Contact> addTo, String text) {
+  private void mergeResultsFromLastNameDir(List<Contact> result, String text) {
     List<String> fromLastNameDir = findContactsInDir(lastNameDir, text);
     List<Contact> lastNameDirContacts = parseToLastnameFirstname(fromLastNameDir);
     Set<Contact> lastNameSet = new HashSet<>(lastNameDirContacts);
-    lastNameSet.removeAll(addTo);
-    addTo.addAll(lastNameSet);
-
+    lastNameSet.removeAll(result);
+    result.addAll(lastNameSet);
   }
 
   private List<Contact> parseToFirstnameLastname(List<String> list) {
