@@ -3,9 +3,9 @@ package base;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class Directory {
 
@@ -18,12 +18,16 @@ public class Directory {
   }
 
   /**
-   * adds a contact to the directory
+   * add a contact to the directory
    */
   public void addContact(Contact contact) {
 
-    addStringToDir(contact.getFirstName() + " " + contact.getLastName(), dir);
-    addStringToDir(contact.getLastName() + " " + contact.getFirstName(), lastNameDir);
+    if (!contact.getLastName().isEmpty()) {
+      addStringToDir(contact.getFirstName() + " " + contact.getLastName(), dir);
+      addStringToDir(contact.getLastName() + " " + contact.getFirstName(), lastNameDir);
+    } else {
+      addStringToDir(contact.getFirstName(), dir);
+    }
   }
 
   private void addStringToDir(String txt, Node node) {
@@ -35,7 +39,7 @@ public class Directory {
   }
 
   /**
-   * finds list of contacts with prefix as given text
+   * find list of contacts with prefix as given text
    */
   public List<Contact> findContact(String text) {
     if (text.isEmpty()) {
@@ -46,31 +50,11 @@ public class Directory {
     List<Contact> dirContacts = parseToFirstnameLastname(fromDir);
     List<Contact> lastNameContacts = parseToLastnameFirstname(fromLastNameDir);
     List<Contact> result = new ArrayList<>();
-    Contact exactMatchFull = getExactMatch(dirContacts, text);
-    Contact exactMatchLastName = getExactMatch(lastNameContacts, text);
-    int fromIndexFull = 0;
-    int fromIndexLastname = 0;
-    if (exactMatchFull != null && exactMatchLastName != null) {
-      result.add(0, exactMatchFull);
-      fromIndexFull = 1;
-      fromIndexLastname = 1;
-      addAllFromIndex(result, dirContacts, 1);
-    } else if (exactMatchLastName != null) {
-      result.add(0, exactMatchLastName);
-      fromIndexLastname = 1;
-    } else if (exactMatchFull != null) {
-      result.add(0, exactMatchFull);
-      fromIndexFull = 1;
-    }
-    addAllFromIndex(result, dirContacts, fromIndexFull);
-    addAllFromIndex(result, lastNameContacts, fromIndexLastname);
+    HashSet<Contact> contactHashSet = new HashSet<>(lastNameContacts);
+    contactHashSet.removeAll(dirContacts);
+    result.addAll(dirContacts);
+    result.addAll(contactHashSet);
     return result;
-  }
-
-  private void addAllFromIndex(List<Contact> contacts, List<Contact> from, int fromIndex) {
-    for (int i = fromIndex; i < from.size(); i++) {
-      contacts.add(from.get(i));
-    }
   }
 
   private List<Contact> parseToFirstnameLastname(List<String> list) {
@@ -90,16 +74,6 @@ public class Directory {
       contacts.add(contact);
     }
     return contacts;
-  }
-
-  private Contact getExactMatch(List<Contact> list, String str) {
-    if (list == null || list.isEmpty()) {
-      return null;
-    }
-    if (list.get(0).toString().equals(str)) {
-      return list.get(0);
-    }
-    return null;
   }
 
   public List<String> findContactInDir(Node directory, String text) {
@@ -143,7 +117,7 @@ public class Directory {
     }
 
     /**
-     * adds a key-value pair with key as given character and new node as value
+     * add a key-value pair with key as given character and new node as value
      *
      * @param val character to append to trie
      * @return a node corresponding to the character
@@ -159,7 +133,7 @@ public class Directory {
     }
 
     /**
-     * adds to given list, for all the suffixes ending with terminal node, by prefixing it with given text
+     * add to given list, for all the suffixes ending with terminal node, by prefixing it with given text
      * e.g. prefix = jo
      *      terminal suffixes = {hn, hn Doe}
      * will add following to the given list
@@ -183,7 +157,7 @@ public class Directory {
     }
 
     /**
-     * if a node is terminal, it is a contact
+     * check if a node forms a contact
      */
     boolean isTerminal() {
       return terminal;

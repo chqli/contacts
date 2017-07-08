@@ -51,13 +51,16 @@ public class DirectoryTest {
   public void testSearchSameFirstnameLastname() {
     Contact c2 = Contact.parseContact("Chris Harris");
     Contact c1 = Contact.parseContact("Chris Chris");
+    Contact c3 = Contact.parseContact("Chris");
     Directory d = new Directory();
     d.addContact(c1);
     d.addContact(c2);
+    d.addContact(c3);
     String input = "Chris";
     List<Contact> findResult = d.findContact(input);
-    assertThat(findResult.get(0), is(c1));
-    assertThat(findResult.get(1), is(c2));
+    assertThat(findResult.get(0), is(c3));
+    assertThat(findResult, hasItem(c1));
+    assertThat(findResult, hasItem(c2));
   }
   @Test
   public void testShouldSaveMulitpleSameContactsAsSingleRecord() {
