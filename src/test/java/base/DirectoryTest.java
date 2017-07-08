@@ -36,6 +36,29 @@ public class DirectoryTest {
     List<Contact> findResult = d.findContact(input);
     assertThat(findResult.isEmpty(), is(true));
   }
+
+  @Test
+  public void testSearchOnLastName() {
+    Contact contact = Contact.parseContact("Chris Harris");
+    Directory d = new Directory();
+    d.addContact(contact);
+    String input = "Har";
+    List<Contact> findResult = d.findContact(input);
+    assertThat(findResult, hasItem(contact));
+  }
+
+  @Test
+  public void testSearchSameFirstnameLastname() {
+    Contact c2 = Contact.parseContact("Chris Harris");
+    Contact c1 = Contact.parseContact("Chris Chris");
+    Directory d = new Directory();
+    d.addContact(c1);
+    d.addContact(c2);
+    String input = "Chris";
+    List<Contact> findResult = d.findContact(input);
+    assertThat(findResult.get(0), is(c1));
+    assertThat(findResult.get(1), is(c2));
+  }
   @Test
   public void testShouldSaveMulitpleSameContactsAsSingleRecord() {
     Contact contact = Contact.parseContact("Chris Harris");
