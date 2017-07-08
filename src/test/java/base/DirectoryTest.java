@@ -113,5 +113,28 @@ public class DirectoryTest {
             .getResource("names_output.txt")).toURI()))) {
       stream.forEach(t -> assertThat(contactList, hasItem(Contact.parseContact(t))));
     }
+    //sed -n -e '/^Tim/p' names.txt |sort |uniq |wc -l
+    assertThat(contactList.size(), is(27));
+  }
+
+  @Test
+  public void test72000NamesWith50CharsFromFile() throws IOException, URISyntaxException {
+    Directory d = new Directory();
+    try (Stream<String> stream = Files
+        .lines(Paths.get((getClass().getClassLoader()
+            .getResource("names_50_chars.txt")).toURI()))) {
+      stream.forEach(t -> d.addContact(Contact.parseContact(t)));
+    }
+    Instant before = Instant.now();
+    List<Contact> contactList = d.findContact("Tim");
+    Instant after = Instant.now();
+    System.out.println(Duration.between(before, after).toMillis());
+    try (Stream<String> stream = Files
+        .lines(Paths.get((getClass().getClassLoader()
+            .getResource("names_50_chars_output.txt")).toURI()))) {
+      stream.forEach(t -> assertThat(contactList, hasItem(Contact.parseContact(t))));
+    }
+    //sed -n -e '/^Tim/p' names_50_chars.txt |sort |uniq |wc -l
+    assertThat(contactList.size(), is(27));
   }
 }
