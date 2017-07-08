@@ -21,10 +21,12 @@ public class Directory {
     for (int i = 0; i < str.length(); i++) {
       current = current.appendIfAbsent(str.charAt(i));
     }
-    current = current.appendIfAbsent(' ');
-    str = contact.getLastName();
-    for (int i = 0; i < str.length(); i++) {
-      current = current.appendIfAbsent(str.charAt(i));
+    if (!contact.getLastName().isEmpty()) {
+      current = current.appendIfAbsent(' ');
+      str = contact.getLastName();
+      for (int i = 0; i < str.length(); i++) {
+        current = current.appendIfAbsent(str.charAt(i));
+      }
     }
     current.setTerminal(true);
   }
@@ -42,59 +44,63 @@ public class Directory {
         return null;
       }
     }
+    if (current.isTerminal()) {
+      strings.add(text);
+    }
     current.allSuffixes(strings, new StringBuilder(text));
     return strings.stream().map(Contact::parseContact).collect(Collectors.toList());
   }
-}
 
-class Node {
+  class Node {
 
-  Map<Character, Node> nextMap;
-  boolean terminal;
+    Map<Character, Node> nextMap;
+    boolean terminal;
 
-  public Node() {
-    this(false);
-  }
-
-  public Node(boolean terminal) {
-    this.terminal = terminal;
-    this.nextMap = new HashMap<>(26, 0.75f);
-  }
-
-  public Node getNextNode(char val) {
-    if (!nextMap.containsKey(val)) {
-      return null;
+    Node() {
+      this(false);
     }
-    return nextMap.get(val);
-  }
 
-  public Node appendIfAbsent(final char val) {
-    if (nextMap.containsKey(val)) {
+    Node(boolean terminal) {
+      this.terminal = terminal;
+      this.nextMap = new HashMap<>(26, 0.75f);
+    }
+
+    Node getNextNode(char val) {
+      if (!nextMap.containsKey(val)) {
+        return null;
+      }
       return nextMap.get(val);
     }
-    Node node = new Node();
-    nextMap.put(val, node);
-    return node;
-  }
 
-  public void allSuffixes(List<String> result, StringBuilder sb) {
-    for (char c : nextMap.keySet()) {
-      Node next = nextMap.get(c);
-      sb.append(c);
-      if (next.isTerminal()) {
-        result.add(sb.toString());
-      } else {
-        next.allSuffixes(result, sb);
+    Node appendIfAbsent(final char val) {
+      if (nextMap.containsKey(val)) {
+        return nextMap.get(val);
       }
-      sb.deleteCharAt(sb.length() - 1);
+      Node node = new Node();
+      nextMap.put(val, node);
+      return node;
+    }
+
+    void allSuffixes(List<String> result, StringBuilder sb) {
+      for (char c : nextMap.keySet()) {
+        Node next = nextMap.get(c);
+        sb.append(c);
+        if (next.isTerminal()) {
+          result.add(sb.toString());
+        } else {
+          next.allSuffixes(result, sb);
+        }
+        sb.deleteCharAt(sb.length() - 1);
+      }
+    }
+
+    boolean isTerminal() {
+      return terminal;
+    }
+
+    void setTerminal(boolean terminal) {
+      this.terminal = terminal;
     }
   }
-
-  public boolean isTerminal() {
-    return terminal;
-  }
-
-  public void setTerminal(boolean terminal) {
-    this.terminal = terminal;
-  }
 }
+

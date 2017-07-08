@@ -26,7 +26,6 @@ public class DirectoryTest {
     List<Contact> findResult = d.findContact(input);
     assertThat(findResult, hasItem(contact));
   }
-
   @Test
   public void testShouldSaveMulitpleSameContactsAsSingleRecord() {
     Contact contact = Contact.parseContact("Chris Harris");
@@ -37,6 +36,16 @@ public class DirectoryTest {
     String input = "Chris";
     List<Contact> findResult = d.findContact(input);
     assertThat(findResult.size(), is(1));
+  }
+
+  @Test
+  public void testShouldAddContactWithOnlyFirstName() {
+    Contact contact = Contact.parseContact("Chris");
+    Directory d = new Directory();
+    d.addContact(contact);
+    String input = "Chris";
+    List<Contact> findResult = d.findContact(input);
+    assertThat(findResult, hasItem(contact));
   }
 
   @Test
