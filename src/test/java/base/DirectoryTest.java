@@ -62,6 +62,18 @@ public class DirectoryTest {
   }
 
   @Test
+  public void testShouldRankExactMatchBeforeOthers() {
+    Contact c1 = Contact.parseContact("Chris Harris");
+    Contact c2 = Contact.parseContact("Chris");
+    Directory d = new Directory();
+    d.addContact(c1);
+    d.addContact(c2);
+    String input = "Chris";
+    List<Contact> findResult = d.findContact(input);
+    assertThat(findResult.get(0), is(c2));
+  }
+
+  @Test
   public void testTime50CharsLongContact() {
     Contact contact = Contact.parseContact("Chris HarrisHarrisHarrisHarrisHarrisHarrisHarrisss");
     Directory d = new Directory();
