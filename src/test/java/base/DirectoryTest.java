@@ -99,14 +99,31 @@ public class DirectoryTest {
 
   @Test
   public void testShouldRankExactMatchBeforeOthers() {
-    Contact c1 = Contact.parseContact("Chris Harris");
     Contact c2 = Contact.parseContact("Chris");
+    Contact c1 = Contact.parseContact("Chris Harris");
     Directory d = new Directory();
     d.addContact(c1);
     d.addContact(c2);
     String input = "Chris";
     List<Contact> findResult = d.findContact(input);
     assertThat(findResult.get(0), is(c2));
+    assertThat(findResult.get(1), is(c1));
+  }
+
+  @Test
+  public void testShouldReturnContactsBeyondFirstTerminalContact() {
+    Contact c2 = Contact.parseContact("nirav");
+    Contact c1 = Contact.parseContact("niraj");
+    Contact c3 = Contact.parseContact("nirav pranami");
+    Directory d = new Directory();
+    d.addContact(c1);
+    d.addContact(c2);
+    d.addContact(c3);
+    String input = "ni";
+    List<Contact> findResult = d.findContact(input);
+    assertThat(findResult, hasItem(c1));
+    assertThat(findResult, hasItem(c2));
+    assertThat(findResult, hasItem(c3));
   }
 
   @Test

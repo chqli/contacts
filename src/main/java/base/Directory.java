@@ -155,9 +155,8 @@ public class Directory {
         sb.append(c);
         if (next.isTerminal()) {
           result.add(sb.toString());
-        } else {
-          next.addAllSuffixes(result, sb);
         }
+        next.addAllSuffixes(result, sb);
         sb.deleteCharAt(sb.length() - 1);
       }
     }

@@ -25,7 +25,7 @@ public class Contact {
     if (text.trim().isEmpty()) {
       throw new IllegalArgumentException("Input empty not allowed");
     }
-    String[] split = text.split(" ");
+    String[] split = text.trim().split(" ");
     Contact contact;
     if (split.length == 1) {
       contact = new Contact(split[0].trim(), "");
