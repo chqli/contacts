@@ -3,9 +3,14 @@ package base;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -45,5 +50,24 @@ public class DirectoryTest {
     Instant after = Instant.now();
     System.out.println(Duration.between(before, after).toMillis());
     assertThat(exactContact, hasItem(contact));
+  }
+
+  @Test
+  public void test72000NamesFromFile() throws IOException, URISyntaxException {
+    Directory d = new Directory();
+    try (Stream<String> stream = Files
+        .lines(Paths.get((getClass().getClassLoader()
+            .getResource("names.txt")).toURI()))) {
+      stream.forEach(t -> d.addContact(Contact.parseContact(t)));
+    }
+    Instant before = Instant.now();
+    List<Contact> contactList = d.findContact("Tim");
+    Instant after = Instant.now();
+    System.out.println(Duration.between(before, after).toMillis());
+    try (Stream<String> stream = Files
+        .lines(Paths.get((getClass().getClassLoader()
+            .getResource("names_output.txt")).toURI()))) {
+      stream.forEach(t -> assertThat(contactList, hasItem(Contact.parseContact(t))));
+    }
   }
 }
