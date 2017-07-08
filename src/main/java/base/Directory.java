@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Directory {
 
@@ -45,16 +46,21 @@ public class Directory {
     if (text.isEmpty()) {
       throw new IllegalArgumentException("Input can't be empty");
     }
-    List<String> fromDir = findContactInDir(dir, text);
-    List<String> fromLastNameDir = findContactInDir(lastNameDir, text);
+    List<String> fromDir = findContactsInDir(dir, text);
     List<Contact> dirContacts = parseToFirstnameLastname(fromDir);
-    List<Contact> lastNameContacts = parseToLastnameFirstname(fromLastNameDir);
     List<Contact> result = new ArrayList<>();
-    HashSet<Contact> contactHashSet = new HashSet<>(lastNameContacts);
-    contactHashSet.removeAll(dirContacts);
     result.addAll(dirContacts);
-    result.addAll(contactHashSet);
+    mergeResultsFromLastNameDir(result, text);
     return result;
+  }
+
+  private void mergeResultsFromLastNameDir(List<Contact> addTo, String text) {
+    List<String> fromLastNameDir = findContactsInDir(lastNameDir, text);
+    List<Contact> lastNameDirContacts = parseToLastnameFirstname(fromLastNameDir);
+    Set<Contact> lastNameSet = new HashSet<>(lastNameDirContacts);
+    lastNameSet.removeAll(addTo);
+    addTo.addAll(lastNameSet);
+
   }
 
   private List<Contact> parseToFirstnameLastname(List<String> list) {
@@ -76,9 +82,9 @@ public class Directory {
     return contacts;
   }
 
-  public List<String> findContactInDir(Node directory, String text) {
+  private List<String> findContactsInDir(Node directory, String text) {
     Node current = directory;
-    ArrayList<String> strings = new ArrayList<>();
+    ArrayList<String> result = new ArrayList<>();
     for (int i = 0; i < text.length(); i++) {
       current = current.getNextNode(text.charAt(i));
       if (current == null) {
@@ -86,10 +92,10 @@ public class Directory {
       }
     }
     if (current.isTerminal()) {
-      strings.add(text);
+      result.add(text);
     }
-    current.addAllSuffixes(strings, new StringBuilder(text));
-    return strings;
+    current.addAllSuffixes(result, new StringBuilder(text));
+    return result;
   }
 
   private class Node {
