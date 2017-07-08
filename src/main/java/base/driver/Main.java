@@ -1,5 +1,6 @@
 package base.driver;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,7 +18,14 @@ public class Main {
     boolean stop = false;
     while (true) {
       System.out.println(prompt);
-      int input = sc.nextInt();
+      int input;
+      try {
+        input = sc.nextInt();
+      } catch (InputMismatchException ime) {
+        sc.nextLine();
+        System.err.println("Invalid Command");
+        continue;
+      }
       sc.nextLine();
       String line;
       switch (input) {
