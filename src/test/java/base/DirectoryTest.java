@@ -1,5 +1,6 @@
 package base;
 
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -22,8 +23,20 @@ public class DirectoryTest {
     Directory d = new Directory();
     d.addContact(contact);
     String input = "Chris";
-    List<Contact> exactContact = d.findContact(input);
-    assertThat(exactContact, hasItem(contact));
+    List<Contact> findResult = d.findContact(input);
+    assertThat(findResult, hasItem(contact));
+  }
+
+  @Test
+  public void testShouldSaveMulitpleSameContactsAsSingleRecord() {
+    Contact contact = Contact.parseContact("Chris Harris");
+    Directory d = new Directory();
+    for (int i = 0; i < 1000000; i++) {
+      d.addContact(contact);
+    }
+    String input = "Chris";
+    List<Contact> findResult = d.findContact(input);
+    assertThat(findResult.size(), is(1));
   }
 
   @Test
