@@ -141,6 +141,10 @@ public class DirectoryTest {
     }
     //sed -n -e '/^Tim/p' names.txt |sort |uniq |wc -l
     assertThat(contactList.size(), is(27));
+    before = Instant.now();
+    assertThat(d.findContact("ZZZZZZZZZ").size(), is(0));
+    after = Instant.now();
+    System.out.println(Duration.between(before, after).toMillis());
   }
 
   @Test
@@ -162,5 +166,9 @@ public class DirectoryTest {
     }
     //sed -n -e '/^Tim/p' names_50_chars.txt |sort |uniq |wc -l
     assertThat(contactList.size(), is(27));
+    before = Instant.now();
+    assertThat(d.findContact("ZZZZZZZZZ").size(), is(0));
+    after = Instant.now();
+    System.out.println(Duration.between(before, after).toMillis());
   }
 }
